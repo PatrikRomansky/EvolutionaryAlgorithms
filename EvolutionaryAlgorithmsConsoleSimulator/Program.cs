@@ -1,0 +1,145 @@
+﻿using EvolutionaryAlgorithms.Algorithms;
+using EvolutionaryAlgorithms.ImageProcessing;
+using EvolutionaryAlgorithms.Individuals;
+using EvolutionaryAlgorithms.ProblemsConfig.ImageProblemsConfig;
+using System;
+using System.Diagnostics;
+using System.Drawing;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Xml.Xsl;
+
+namespace EVAConsoleImageSimulator
+{
+    class Program
+    {
+
+        public static void RunParallelImage(Type problemConfigName, string inputFileName, int logRate)
+        {
+
+            var img = Image.FromFile(inputFileName) as Bitmap;
+
+            var blockSize = ParameterSetter.SetPositiveIntParameter("Block size", 5);
+
+            Bitmap[] targets = Split_Concate.SplitImg( img, blockSize);
+
+            var consoleProblemConfigs = new IImageProblemConfig[targets.Length];
+            var evas = new IEVA[targets.Length];
+
+
+            var configuration = new Configuration[targets.Length];
+
+            for (int i = 0; i < targets.Length; i++)
+            {
+                consoleProblemConfigs[i] = Activator.CreateInstance(problemConfigName) as IImageProblemConfig;
+                consoleProblemConfigs[i].Initialize(i);
+
+                consoleProblemConfigs[i].Initialize(targets[i], inputFileName);
+
+                configuration[i] = new Configuration();
+            }
+
+            evas = Configuration.SetEVA(consoleProblemConfigs);
+
+            for (int i = 0; i < targets.Length; i++)
+            {
+                configuration[i].SetGenerationInfoLog(evas[i], consoleProblemConfigs[i], logRate);
+                consoleProblemConfigs[i].ConfigGATermination(evas[i]);
+            }
+
+            IIndividual[] bestInds = new IIndividual[targets.Length];
+
+            var stopwatch = Stopwatch.StartNew();
+
+            /**/
+            Parallel.For(0, evas.Length, index => {
+
+                evas[index].Run();
+
+                bestInds[index] = evas[index].BestIndividual;
+
+               // configuration[index].Saveinfo(inputFileName, index);
+
+            });
+
+            /*/
+
+            for (var index = 0; index < evas.Length; index++)
+            {
+                evas[index].Run();
+
+                bestInds[index] = evas[index].BestIndividual;
+
+              //  Configuration.Saveinfo(inputFileName,);
+
+            }
+
+
+            /**/
+            stopwatch.Stop();
+
+
+            Console.WriteLine("Total time: " + stopwatch.Elapsed);
+            var result = Split_Concate.ConcateImgs(bestInds, blockSize, img.Width, img.Height);
+
+            var m_destFolder = Configuration.CreateDirectory(inputFileName, "result_final");
+
+            var fileName = m_destFolder + "/" + "final" + ".png";
+
+            result.Save(fileName);
+        }
+
+        public static void RunImage(Type problemConfigName, string inputFileName, int logRate)
+        {
+            // Scale img
+            var paramterScale = ParameterSetter.SetFloat("Scale", 0.01f, 1);
+
+
+            var consoleProblemConfig = Activator.CreateInstance(problemConfigName) as IImageProblemConfig;
+            consoleProblemConfig.Initialize(0);
+
+            consoleProblemConfig.InitializeScale(paramterScale);
+            consoleProblemConfig.Initialize(inputFileName);
+
+            var eva = Configuration.SetEVA(new[] { consoleProblemConfig});
+            var configuration = new Configuration();
+
+
+            configuration.SetGenerationInfoLog(eva[0], consoleProblemConfig, logRate);
+            consoleProblemConfig.ConfigGATermination(eva[0]);
+            eva[0].Run();
+        }
+
+        static void Main(string[] args)
+        {
+           
+            bool running = true;
+            
+            while (running)
+            {
+                Console.Clear();
+                
+                Console.WriteLine("Evolution image approximation.");
+
+                var paralelization = ParameterSetter.SetBool("Parallelization");
+
+                // Logger rate
+                var logRate = ParameterSetter.SetPositiveIntParameter("Logger rate", 1);
+
+                // load input image
+                var inputFileName = ParameterSetter.SetFileNameParameter("image");
+
+                var problemConfigName = ParameterSetter.SetProblemCOofig();
+
+
+                if (paralelization)
+                    RunParallelImage(problemConfigName, inputFileName, logRate);
+                else
+                    RunImage(problemConfigName, inputFileName, logRate);
+
+                Console.WriteLine("EVOLVED");
+                running = ParameterSetter.SetBool("RESTART");
+            }
+        }
+    }
+}

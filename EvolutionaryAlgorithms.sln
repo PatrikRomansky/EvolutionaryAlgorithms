@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30204.135
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EvolutionaryAlgorithms", "EvolutionaryAlgorithms\EvolutionaryAlgorithms.csproj", "{C9125E55-C0A0-4995-8F84-7BA5460CD918}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EVAConsoleImageSimulator", "EvolutionaryAlgorithmsConsoleSimulator\EVAConsoleImageSimulator.csproj", "{9C93EA10-20D8-443B-8526-B99FD2EAC5C5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C9125E55-C0A0-4995-8F84-7BA5460CD918}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9125E55-C0A0-4995-8F84-7BA5460CD918}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9125E55-C0A0-4995-8F84-7BA5460CD918}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9125E55-C0A0-4995-8F84-7BA5460CD918}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C93EA10-20D8-443B-8526-B99FD2EAC5C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C93EA10-20D8-443B-8526-B99FD2EAC5C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C93EA10-20D8-443B-8526-B99FD2EAC5C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C93EA10-20D8-443B-8526-B99FD2EAC5C5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9B3ECF5B-CA5C-478B-BEB3-F88727F4A6F3}
+	EndGlobalSection
+EndGlobal
