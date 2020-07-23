@@ -12,7 +12,7 @@ namespace EvolutionaryAlgorithms.ProblemsConfig.ImageProblemsConfig
     /// Controller for individual, which genes represent Bitmap image (RGB).    
     /// All usable operators.
     /// </summary>
-    class BitmapImageProblemConfig : BaseBitmapImageProblemConfig
+    public class BitmapImageProblemConfig : BaseBitmapImageProblemConfig
     {
         /// <summary>
         /// Initializes possible xovers for this instance.

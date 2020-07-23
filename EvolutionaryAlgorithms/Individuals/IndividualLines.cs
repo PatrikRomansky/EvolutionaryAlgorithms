@@ -162,5 +162,27 @@ namespace EvolutionaryAlgorithms.Individuals
 
             return result;
         }
+
+        /// <summary>
+        /// Replaces the gene in the specified index.
+        /// </summary>
+        /// <param name="index">The gene index to replace.</param>
+        /// <param name="gene">The new gene.</param>
+        public override void ReplaceGene(int index, double gene)
+        {
+            maxGeneValue = Height;
+
+            if(index % 2 == 0)
+                maxGeneValue = Width;
+
+            if (gene > maxGeneValue)
+                gene = maxGeneValue;
+
+            if (gene < minGeneValue)
+                gene = minGeneValue;
+
+            this.genes[index] = gene;
+            Fitness = null;
+        }
     }
 }

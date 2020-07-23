@@ -47,7 +47,7 @@ namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies
                 var currInd = population.CreateEmptyIndividual();
                 currInd.ReplaceGenes(x.ToArray());
 
-                var value = 1 / fitness.Evaluate(currInd);
+                var value = fitness.Evaluate(currInd);
                 solutions.Add(new Tuple<Vector<double>, double>(x, value));
 
             }

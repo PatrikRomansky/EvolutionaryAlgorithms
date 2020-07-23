@@ -217,23 +217,12 @@ namespace EvolutionaryAlgorithms.Algorithms
             return executor.Cross(Population, xover, xoverProbability, parents);
         }
 
-        // for adaptation or termination(fitness)
-        private double? previuosBestFit = 0;
-
         /// <summary>
         /// Mutate the specified individuals.
         /// </summary>
         /// <param name="individuals">The individuals.</param>
         protected void Mutate(IList<IIndividual> individuals)
         {
-            // new best
-            var fit = BestIndividual.Fitness;
-            // compere best inds.
-            if (fit != null & previuosBestFit * 1.5 <= fit)
-            {
-                previuosBestFit = fit;
-            }
-
             executor.Mutate(mutation, mutationProbability, individuals);
         }
 

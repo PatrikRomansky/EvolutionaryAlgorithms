@@ -19,7 +19,7 @@ namespace EvolutionaryAlgorithms.Selections
         /// <returns>Selected individuals.</returns>
         public IList<IIndividual> SelectIndividuals(int number, IPopulation generation)
         {
-            var orderedIndividuals = generation.Individuals.OrderByDescending(c => c.Fitness);
+            var orderedIndividuals = generation.Individuals.OrderBy(c => c.Fitness);
 
             return orderedIndividuals.Take(number).ToList();
         }

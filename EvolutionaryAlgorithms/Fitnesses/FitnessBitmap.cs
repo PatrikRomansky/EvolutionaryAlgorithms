@@ -74,7 +74,7 @@ namespace EvolutionaryAlgorithms.Fitnesses
             {
                 fitness += PixelDifference(this.target[i], (Color)genes[i]);
             }
-            return 1 / (1 + fitness);
+            return fitness;
         }
     }
 }

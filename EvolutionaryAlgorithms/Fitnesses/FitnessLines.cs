@@ -82,7 +82,7 @@ namespace EvolutionaryAlgorithms.Fitnesses
                 fitness += LinesDifference((LineSegment2D)genes[i], target[i]);
             }
 
-            return 1 / (fitness + 1);
+            return fitness;
         }
     }
 }

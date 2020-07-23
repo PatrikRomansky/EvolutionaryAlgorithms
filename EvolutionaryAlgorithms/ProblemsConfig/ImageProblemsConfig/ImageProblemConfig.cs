@@ -364,6 +364,12 @@ namespace EvolutionaryAlgorithms.ProblemsConfig.ImageProblemsConfig
             /**/
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="fileName"></param>
+        /// <param name="data"></param>
         private void LogData(string path, string fileName, List<string> data)
         {
 
@@ -380,6 +386,9 @@ namespace EvolutionaryAlgorithms.ProblemsConfig.ImageProblemsConfig
         private List<string> elapsedTimeSpeed = new List<string>();
         private List<string> allInfo = new List<string>();
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void Saveinfo()
         {
             LogData(m_destFolder, "fitness", fits);
@@ -387,6 +396,12 @@ namespace EvolutionaryAlgorithms.ProblemsConfig.ImageProblemsConfig
             LogData(m_destFolder, "all", allInfo);
         }
 
+        /// <summary>
+        /// Sets information about generation into log.
+        /// </summary>
+        /// <param name="fitness">Fitness value in string represention.</param>
+        /// <param name="speed">Speed </param>
+        /// <param name="all"></param>
         public void SetGenerationInfo(string fitness, string speed, string all)
         {
             fits.Add(fitness);

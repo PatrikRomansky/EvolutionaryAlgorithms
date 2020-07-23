@@ -14,7 +14,7 @@ using System;
 
 namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies
 {
-    public class EvaSelf_Adaptation : EVA
+    public class SelfAdaptation : EVA
     {
         protected float mutationProbability;
         protected float xoverProbability;
@@ -25,7 +25,7 @@ namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies
         protected ISelection selection;
         private readonly Xorshift _rng;
 
-        public EvaSelf_Adaptation(IFitness fitness, IPopulation population) : base(fitness, population)
+        public SelfAdaptation(IFitness fitness, IPopulation population) : base(fitness, population)
         {
             xover  = new XoverUniform();
             elite = new EliteByFitness(0.1);
@@ -96,13 +96,13 @@ namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies
             {
                 var f = individuals[i].Fitness;
 
-                if (f >= fits[i])
+                if (f <= fits[i])
                     c++;
             }
 
             // 1/5 
 
-            var success = (double)c / individuals.Count;
+            var success = (double) c / individuals.Count;
 
             if (success > 0.2)
             {
@@ -137,8 +137,6 @@ namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies
 
         void Mutate(IIndividual ind)
         {
-
-
             // last gene is sigma parameter
             // var sigma = 1;
             var sigma = ind.GetGene(ind.Length - 1);

@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace EvolutionaryAlgorithms.ProblemsConfig.ImageProblemsConfig
 {
-    class BitmapImageKmeans_ProblemConfig: BaseBitmapImageProblemConfig
+    public class BitmapImageKmeansInitProblemConfig: BaseBitmapImageProblemConfig
     {
-        private Color[] initColors;
+        protected Color[] initColors;
 
-        private int k = 10;
+        protected int k = 10;
 
         /// <summary>
         /// Creates the individual.

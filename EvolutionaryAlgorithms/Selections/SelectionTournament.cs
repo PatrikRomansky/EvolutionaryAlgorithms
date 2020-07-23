@@ -29,7 +29,7 @@ namespace EvolutionaryAlgorithms.Selections
             while (selected.Count < number)
             {
                 var randomIndexes = FastRandom.GetUniqueInts(2, 0, candidates.Count);
-                var tournamentWinner = candidates.Where((c, i) => randomIndexes.Contains(i)).OrderByDescending(c => c.Fitness).First();
+                var tournamentWinner = candidates.Where((c, i) => randomIndexes.Contains(i)).OrderBy(c => c.Fitness).First();
 
                 selected.Add(tournamentWinner.Clone() as IIndividual);
 

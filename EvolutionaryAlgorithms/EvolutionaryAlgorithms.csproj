@@ -93,6 +93,7 @@
     <Compile Include="Algorithms\EVA.cs" />
     <Compile Include="Algorithms\EvolutionaryStrategies\CMA-ES\CMA.cs" />
     <Compile Include="Algorithms\EvolutionaryStrategies\CMA-ES\EVACMA-ES.cs" />
+    <Compile Include="Algorithms\EvolutionaryStrategies\DifferentialEvolution.cs" />
     <Compile Include="Algorithms\EvolutionaryStrategies\EVASelf-Adaptation.cs" />
     <Compile Include="Algorithms\Executors\IExecutor.cs" />
     <Compile Include="Algorithms\Executors\LinearExecutor.cs" />
@@ -111,6 +112,7 @@
     <Compile Include="Individuals\Individual.cs" />
     <Compile Include="Individuals\IndividualBitmap.cs" />
     <Compile Include="Individuals\IndividualImage.cs" />
+    <Compile Include="Individuals\IndividualKmeansBitmap.cs" />
     <Compile Include="Individuals\IndividualLines.cs" />
     <Compile Include="Operators\Mutations\IMutation.cs" />
     <Compile Include="Operators\Mutations\Mutation.cs" />
@@ -128,7 +130,8 @@
     <Compile Include="Populations\Population.cs" />
     <Compile Include="ProblemsConfig\ImageProblemsConfig\BaseBitmapImageProblemConfig.cs" />
     <Compile Include="ProblemsConfig\ImageProblemsConfig\BaseLinesImageProblemConfig.cs" />
-    <Compile Include="ProblemsConfig\ImageProblemsConfig\BitmapImageKmeans_ProblemConfig.cs" />
+    <Compile Include="ProblemsConfig\ImageProblemsConfig\BitmapImageKmeansInitProblemConfig.cs" />
+    <Compile Include="ProblemsConfig\ImageProblemsConfig\BitmapImageKmeansProblemConfig.cs" />
     <Compile Include="ProblemsConfig\ImageProblemsConfig\BitmapImageProblemConfig.cs" />
     <Compile Include="ProblemsConfig\ImageProblemsConfig\IImageProblemConfig.cs" />
     <Compile Include="ProblemsConfig\ImageProblemsConfig\ImageProblemConfig.cs" />

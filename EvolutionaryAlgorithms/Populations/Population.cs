@@ -66,7 +66,7 @@ namespace EvolutionaryAlgorithms.Populations
         /// <returns>Best individividual.</returns>
         public IIndividual GetBestIndividual()
         {
-            Individuals = Individuals.OrderByDescending(c => c.Fitness.Value).ToList();
+            Individuals = Individuals.OrderBy(c => c.Fitness.Value).ToList();
             return Individuals.First();
         }
     }

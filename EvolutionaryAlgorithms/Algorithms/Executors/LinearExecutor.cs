@@ -32,7 +32,7 @@ namespace EvolutionaryAlgorithms.Algorithms.Executors
             }
 
             // sorts population by fitness
-            population.Individuals = population.Individuals.OrderByDescending(c => c.Fitness.Value).ToList();
+          //  population.Individuals = population.Individuals.OrderBy(c => c.Fitness.Value).ToList();
         }
 
 

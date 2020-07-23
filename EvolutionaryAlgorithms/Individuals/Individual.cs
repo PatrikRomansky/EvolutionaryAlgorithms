@@ -89,7 +89,7 @@ namespace EvolutionaryAlgorithms.Individuals
         /// </summary>
         /// <param name="index">The gene index to replace.</param>
         /// <param name="gene">The new gene.</param>
-        public void ReplaceGene(int index, double gene)
+        public virtual void ReplaceGene(int index, double gene)
         {
             if (gene > maxGeneValue)
                 gene = maxGeneValue;
