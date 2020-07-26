@@ -14,10 +14,10 @@ using System.Threading.Tasks;
 
 namespace EvolutionaryAlgorithms.ProblemsConfig.ImageProblemsConfig
 {
-    public class BaseShapesImageProblemConfig:ImageProblemConfig
+    public class BaseCirclesImageProblemConfig: ImageProblemConfig
     {
         // number of lines
-        private int indSize;
+        private int indSize = 100;
 
         /// <summary>
         /// Initializes this instance.
@@ -27,7 +27,6 @@ namespace EvolutionaryAlgorithms.ProblemsConfig.ImageProblemsConfig
             var targetBitmap = this.InititializeSame(targetInputfileName);
 
             var fit = new FitnessShapes(targetBitmap);
-            indSize = 100;
             fitness = fit;
 
             base.Initialize(targetInputfileName);
@@ -45,7 +44,6 @@ namespace EvolutionaryAlgorithms.ProblemsConfig.ImageProblemsConfig
             rawHeight = height;
 
             var fit = new FitnessShapes(targetBitmap);
-            indSize = 100;
             fitness = fit;
 
             base.Initialize(targetInputfileName);
@@ -57,7 +55,7 @@ namespace EvolutionaryAlgorithms.ProblemsConfig.ImageProblemsConfig
         /// <returns>The individual.</returns>
         public override IIndividual CreateIndividual()
         {
-            return new IndividualShapes(width, height, indSize);
+            return new IndividualCircles(width, height, indSize);
         }
 
         /// <summary>
@@ -117,7 +115,7 @@ namespace EvolutionaryAlgorithms.ProblemsConfig.ImageProblemsConfig
 
         public override IIndividual CreateEmptyIndividual()
         {
-            return new IndividualShapes(width, height, indSize, false);
+            return new IndividualCircles(width, height, indSize, false);
         }
     }
 }

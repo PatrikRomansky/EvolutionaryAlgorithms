@@ -22,32 +22,14 @@ namespace EvolutionaryAlgorithms.Individuals
         private int numberOfLines;
 
         /// <summary>
-        /// Gets the width.
-        /// </summary>
-        /// <value>
-        /// The width.
-        /// </value>
-        public int Width { get; private set; }
-
-        /// <summary>
-        /// Gets the height.
-        /// </summary>
-        /// <value>
-        /// The height.
-        /// </value>
-        public int Height { get; private set; }
-
-        /// <summary>
         /// Initializes a new instance of the IndividualBitmap.
         /// </summary>
         /// <param name="width">The width.</param>
         /// <param name="height">The height.</param>
         /// <param name="init">Initilaization genes.</param>
         public IndividualLines(int width, int height, int numberOfLines, bool init = true)
-            : base(numberOfLines * 4)
+            : base(width, height, numberOfLines * 4)
         {
-            Width = width;
-            Height = height;
 
             this.numberOfLines = numberOfLines;
 
@@ -62,8 +44,8 @@ namespace EvolutionaryAlgorithms.Individuals
 
                 for (int i = 0; i < numberOfLines; i++)
                 {
-                    var sX = FastRandom.GetInt(0, Width);
-                    var sY = FastRandom.GetInt(0, Height);
+                    var sX = FastRandom.GetInt(0, width);
+                    var sY = FastRandom.GetInt(0, height);
                     var shifts = FastRandom.GetInts(2, 0, 30);
 
                     genes[indexX1] = sX;

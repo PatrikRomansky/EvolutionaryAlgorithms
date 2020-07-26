@@ -112,6 +112,7 @@
     <Compile Include="Individuals\IIndividual.cs" />
     <Compile Include="Individuals\Individual.cs" />
     <Compile Include="Individuals\IndividualBitmap.cs" />
+    <Compile Include="Individuals\IndividualCircles.cs" />
     <Compile Include="Individuals\IndividualImage.cs" />
     <Compile Include="Individuals\IndividualKmeansBitmap.cs" />
     <Compile Include="Individuals\IndividualLines.cs" />
@@ -132,7 +133,7 @@
     <Compile Include="Populations\Population.cs" />
     <Compile Include="ProblemsConfig\ImageProblemsConfig\BaseBitmapImageProblemConfig.cs" />
     <Compile Include="ProblemsConfig\ImageProblemsConfig\BaseLinesImageProblemConfig.cs" />
-    <Compile Include="ProblemsConfig\ImageProblemsConfig\BaseShapesImageProblemConfig.cs" />
+    <Compile Include="ProblemsConfig\ImageProblemsConfig\BaseCirclesImageProblemConfig.cs" />
     <Compile Include="ProblemsConfig\ImageProblemsConfig\BitmapImageKmeansInitProblemConfig.cs" />
     <Compile Include="ProblemsConfig\ImageProblemsConfig\BitmapImageKmeansProblemConfig.cs" />
     <Compile Include="ProblemsConfig\ImageProblemsConfig\BitmapImageProblemConfig.cs" />

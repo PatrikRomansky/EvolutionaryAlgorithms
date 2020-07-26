@@ -12,33 +12,14 @@ namespace EvolutionaryAlgorithms.Individuals
     public class IndividualBitmap : IndividualImage
     {
         /// <summary>
-        /// Gets the width.
-        /// </summary>
-        /// <value>
-        /// The width.
-        /// </value>
-        public int Width { get; private set; }
-
-        /// <summary>
-        /// Gets the height.
-        /// </summary>
-        /// <value>
-        /// The height.
-        /// </value>
-        public int Height { get; private set; }
-
-        /// <summary>
         /// Initializes a new instance of the IndividualBitmap.
         /// </summary>
         /// <param name="width">The width.</param>
         /// <param name="height">The height.</param>
         /// <param name="init">Initilaization genes.</param>
         public IndividualBitmap(int width, int height, bool init = true, Color[] initColors = null)
-            : base(width * height * 3)
+            : base(width, height, width * height * 3)
         {
-            Width = width;
-            Height = height;
-
             // Init
             if (init)
             {

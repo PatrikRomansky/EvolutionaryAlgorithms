@@ -9,10 +9,30 @@ namespace EvolutionaryAlgorithms.Individuals
     public abstract class IndividualImage : Individual
     {
         /// <summary>
+        /// Gets the width.
+        /// </summary>
+        /// <value>
+        /// The width.
+        /// </value>
+        public int Width { get; protected set; }
+
+        /// <summary>
+        /// Gets the height.
+        /// </summary>
+        /// <value>
+        /// The height.
+        /// </value>
+        public int Height { get; protected set; }
+
+        /// <summary>
         /// Base constructor.
         /// </summary>
         /// <param name="lenght"></param>
-        public IndividualImage(int lenght) : base(lenght) { }
+        public IndividualImage(int width, int height, int lenght) : base(lenght) 
+        {
+            Width = width;
+            Height = height;       
+        }
 
         /// <summary>
         /// Creates an image from genetic information.
