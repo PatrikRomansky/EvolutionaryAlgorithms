@@ -1,13 +1,8 @@
 ﻿using Emgu.CV;
 using Emgu.CV.Structure;
 using EvolutionaryAlgorithms.Randomization;
-using ImageMagick;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EvolutionaryAlgorithms.Individuals
 {

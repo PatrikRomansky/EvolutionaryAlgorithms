@@ -2,39 +2,37 @@
 using Emgu.CV.Structure;
 using EvolutionaryAlgorithms.Randomization;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EvolutionaryAlgorithms.Individuals
 {
-    public class GeneCircle
+    public class GeneRectangle
     {
-        public Point center;
-        public int radius;
+        public Rectangle area;
+
         public MCvScalar color;
-        public GeneCircle(int x, int y, int radius, MCvScalar color)
+        public GeneRectangle(int x, int y, int width, int height, MCvScalar color)
         {
-            this.center = new Point(x, y);
-            this.radius = radius;
+            this.area = new Rectangle(x, y, width, height);
+
             this.color = color;
         }
     }
 
-    public class IndividualCircles : IndividualShapes
+    public class IndividualRectangles : IndividualShapes
     {
-        int maxRadius = 25;
-        const int size = 6;
+        int maxWidth = 40;
+        int maxHeight = 40;
+
+        const int size = 7;
 
         /// <summary>
-        /// Initializes a new instance of the IndividualCircles.
+        /// Initializes a new instance of the IndividualRectangles.
         /// </summary>
         /// <param name="width">The width.</param>
         /// <param name="height">The height.</param>
         /// <param name="init">Initilaization genes.</param>
-        public IndividualCircles(int width, int height, int numberOfShapes, bool init = true)
+        public IndividualRectangles(int width, int height, int numberOfShapes, bool init = true)
             : base(width, height, numberOfShapes * size)
         {
             geneSize = size;
@@ -46,14 +44,21 @@ namespace EvolutionaryAlgorithms.Individuals
             {
 
                 for (int i = 0; i < numberOfShapes; i++)
-                {
-                    genes[(i*geneSize)] = FastRandom.GetInt(0, Width);
+                {   
+                    //left corner
+                    genes[(i * geneSize)] = FastRandom.GetInt(0, Width);
                     genes[(i * geneSize) + 1] = FastRandom.GetInt(0, Height);
-                    genes[(i * geneSize) + 2] = FastRandom.GetInt(0, maxRadius);
 
-                    genes[(i * geneSize) + 3] = FastRandom.GetDouble() * 255;
+                    // width
+                    genes[(i * geneSize) + 2] = FastRandom.GetInt(0, maxWidth);
+
+                    // height
+                    genes[(i * geneSize) + 3] = FastRandom.GetInt(0, maxHeight);
+
+                    // color 
                     genes[(i * geneSize) + 4] = FastRandom.GetDouble() * 255;
                     genes[(i * geneSize) + 5] = FastRandom.GetDouble() * 255;
+                    genes[(i * geneSize) + 6] = FastRandom.GetDouble() * 255;
 
 
                 }
@@ -62,7 +67,7 @@ namespace EvolutionaryAlgorithms.Individuals
 
         public override IIndividual CreateNew()
         {
-            var newInd = new IndividualCircles(Width, Height, numberOfShapes, false);
+            var newInd = new IndividualRectangles(Width, Height, numberOfShapes, false);
 
             newInd.genes = new double[this.Length];
             newInd.Length = this.Length;
@@ -78,9 +83,9 @@ namespace EvolutionaryAlgorithms.Individuals
             for (int i = 0; i < numberOfShapes; i++)
             {
 
-                var c = new MCvScalar(genes[(i * geneSize) + 3], genes[(i * geneSize) + 4], genes[(i * geneSize) + 5]);
+                var c = new MCvScalar(genes[(i * geneSize) + 4], genes[(i * geneSize) + 5], genes[(i * geneSize) + 6]);
 
-                result[i] = new GeneCircle((int)genes[(i * geneSize)], (int)genes[(i * geneSize) + 1], (int)genes[(i * geneSize) + 2], c);
+                result[i] = new GeneRectangle((int)genes[(i * geneSize)], (int)genes[(i * geneSize) + 1], (int)genes[(i * geneSize) + 2], (int)genes[(i * geneSize) + 3], c);
             }
 
 
@@ -89,9 +94,9 @@ namespace EvolutionaryAlgorithms.Individuals
 
         protected override void DrawShape(Image<Bgr, byte> img, object shape)
         {
-            var cir = (GeneCircle) shape;
+            var rec = (GeneRectangle)shape;
 
-            CvInvoke.Circle(img, cir.center, cir.radius, cir.color, -1);
+            CvInvoke.Rectangle(img, rec.area, rec.color, -1);
         }
 
         protected override double GetMaxGeneValue(int geneIndex)
@@ -109,7 +114,10 @@ namespace EvolutionaryAlgorithms.Individuals
                     coeficient = Height;
                     break;
                 case (2):
-                    coeficient = maxRadius;
+                    coeficient = maxWidth;
+                    break;
+                case (3):
+                    coeficient = maxHeight;
                     break;
                 default:
                     coeficient = 255;

@@ -116,7 +116,9 @@
     <Compile Include="Individuals\IndividualImage.cs" />
     <Compile Include="Individuals\IndividualKmeansBitmap.cs" />
     <Compile Include="Individuals\IndividualLines.cs" />
+    <Compile Include="Individuals\IndividualRectangles.cs" />
     <Compile Include="Individuals\IndividualShapes.cs" />
+    <Compile Include="Individuals\IndividualTriangles.cs" />
     <Compile Include="Operators\Mutations\IMutation.cs" />
     <Compile Include="Operators\Mutations\Mutation.cs" />
     <Compile Include="Operators\Mutations\MutationShift.cs" />
@@ -134,11 +136,14 @@
     <Compile Include="ProblemsConfig\ImageProblemsConfig\BaseBitmapImageProblemConfig.cs" />
     <Compile Include="ProblemsConfig\ImageProblemsConfig\BaseLinesImageProblemConfig.cs" />
     <Compile Include="ProblemsConfig\ImageProblemsConfig\BaseCirclesImageProblemConfig.cs" />
+    <Compile Include="ProblemsConfig\ImageProblemsConfig\BaseRectanglesImageProblemConfig.cs" />
+    <Compile Include="ProblemsConfig\ImageProblemsConfig\BaseTrianglesImageProblemConfig.cs" />
     <Compile Include="ProblemsConfig\ImageProblemsConfig\BitmapImageKmeansInitProblemConfig.cs" />
     <Compile Include="ProblemsConfig\ImageProblemsConfig\BitmapImageKmeansProblemConfig.cs" />
     <Compile Include="ProblemsConfig\ImageProblemsConfig\BitmapImageProblemConfig.cs" />
     <Compile Include="ProblemsConfig\ImageProblemsConfig\IImageProblemConfig.cs" />
     <Compile Include="ProblemsConfig\ImageProblemsConfig\ImageProblemConfig.cs" />
+    <Compile Include="ProblemsConfig\ImageProblemsConfig\ShapesImageProblemConfig.cs" />
     <Compile Include="ProblemsConfig\IProblemConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Randomization\FastRandom.cs" />

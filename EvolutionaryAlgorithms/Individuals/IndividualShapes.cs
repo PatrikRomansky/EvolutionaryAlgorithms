@@ -12,7 +12,7 @@ namespace EvolutionaryAlgorithms.Individuals
         protected int geneSize;
 
         /// <summary>
-        /// Initializes a new instance of the IndividualBitmap.
+        /// Initializes a shapes.
         /// </summary>
         /// <param name="width">The width.</param>
         /// <param name="height">The height.</param>
