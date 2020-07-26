@@ -183,11 +183,22 @@ namespace EvolutionaryAlgorithms.Algorithms
             var parents = SelectParents();
             var offspring = Cross(parents);
             Mutate(offspring);
+            EvaluateFitnessChildren(offspring);
             offspring = SelectElite(offspring, parents);
 
             Population.Individuals = offspring;
 
             CurrentGenerationsNumber++;
+        }
+
+
+
+        /// <summary>
+        /// Evaluates the fitness.
+        /// </summary>
+        public void EvaluateFitnessChildren(IList<IIndividual> children)
+        {
+            executor.EvaluateFitness(fitness, children);
         }
 
         /// <summary>

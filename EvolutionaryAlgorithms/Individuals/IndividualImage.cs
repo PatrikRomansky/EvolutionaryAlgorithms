@@ -8,7 +8,6 @@ namespace EvolutionaryAlgorithms.Individuals
     /// </summary>
     public abstract class IndividualImage : Individual
     {
-
         /// <summary>
         /// Base constructor.
         /// </summary>

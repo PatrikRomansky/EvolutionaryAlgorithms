@@ -105,6 +105,7 @@
     <Compile Include="ElitistPrivileges\IElite.cs" />
     <Compile Include="Fitnesses\FitnessBitmap.cs" />
     <Compile Include="Fitnesses\FitnessLines.cs" />
+    <Compile Include="Fitnesses\FitnessShapes.cs" />
     <Compile Include="Fitnesses\IFitness.cs" />
     <Compile Include="ImageProcessing\Kmeans.cs" />
     <Compile Include="ImageProcessing\Split_Concate.cs" />
@@ -114,6 +115,7 @@
     <Compile Include="Individuals\IndividualImage.cs" />
     <Compile Include="Individuals\IndividualKmeansBitmap.cs" />
     <Compile Include="Individuals\IndividualLines.cs" />
+    <Compile Include="Individuals\IndividualShapes.cs" />
     <Compile Include="Operators\Mutations\IMutation.cs" />
     <Compile Include="Operators\Mutations\Mutation.cs" />
     <Compile Include="Operators\Mutations\MutationShift.cs" />
@@ -130,6 +132,7 @@
     <Compile Include="Populations\Population.cs" />
     <Compile Include="ProblemsConfig\ImageProblemsConfig\BaseBitmapImageProblemConfig.cs" />
     <Compile Include="ProblemsConfig\ImageProblemsConfig\BaseLinesImageProblemConfig.cs" />
+    <Compile Include="ProblemsConfig\ImageProblemsConfig\BaseShapesImageProblemConfig.cs" />
     <Compile Include="ProblemsConfig\ImageProblemsConfig\BitmapImageKmeansInitProblemConfig.cs" />
     <Compile Include="ProblemsConfig\ImageProblemsConfig\BitmapImageKmeansProblemConfig.cs" />
     <Compile Include="ProblemsConfig\ImageProblemsConfig\BitmapImageProblemConfig.cs" />

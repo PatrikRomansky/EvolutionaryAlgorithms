@@ -20,6 +20,7 @@ namespace EvolutionaryAlgorithms.Individuals
     {
 
         private int numberOfLines;
+
         /// <summary>
         /// Gets the width.
         /// </summary>

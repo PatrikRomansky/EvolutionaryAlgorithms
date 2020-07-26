@@ -34,7 +34,9 @@ namespace EvolutionaryAlgorithms.ElitistPrivileges
             if (eliteIndsCount < 1)
                 return offspring;
 
-            var ordered = parents.OrderBy(c => c.Fitness).Take(eliteIndsCount).ToList();
+
+            var orderedParent = parents.OrderBy(c => c.Fitness);
+            var ordered = orderedParent.Take(eliteIndsCount).ToList();
             ordered.AddRange(offspring.Take(popSize - eliteIndsCount));
 
             /*/
