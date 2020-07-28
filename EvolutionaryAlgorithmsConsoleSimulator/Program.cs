@@ -13,7 +13,12 @@ namespace EVAConsoleImageSimulator
 {
     class Program
     {
-
+        /// <summary>
+        /// Parallel EA.
+        /// </summary>
+        /// <param name="problemConfigName">Problem represention.</param>
+        /// <param name="inputFileName">Input image</param>
+        /// <param name="logRate">logger rate</param>
         public static void RunParallelImage(Type problemConfigName, string inputFileName, int logRate)
         {
 
@@ -89,6 +94,12 @@ namespace EVAConsoleImageSimulator
             result.Save(fileName);
         }
 
+        /// <summary>
+        /// Notmal EA
+        /// </summary>
+        /// <param name="problemConfigName">Problem represention.</param>
+        /// <param name="inputFileName">Input image</param>
+        /// <param name="logRate">logger rate</param>
         public static void RunImage(Type problemConfigName, string inputFileName, int logRate)
         {
 

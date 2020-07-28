@@ -25,6 +25,11 @@ namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies
         protected ISelection selection;
         private readonly Xorshift _rng;
 
+        /// <summary>
+        /// Evolutionary strategy
+        /// </summary>
+        /// <param name="fitness">fit. func.</param>
+        /// <param name="population">init pop</param>
         public ES_μ_λ(IFitness fitness, IPopulation population) : base(fitness, population)
         {
             xover  = new XoverUniform();
@@ -38,6 +43,9 @@ namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies
 
         }
 
+        /// <summary>
+        /// Init population
+        /// </summary>
         protected override void CreatePopulation()
         {
             popSize = population.Size;
@@ -56,7 +64,6 @@ namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies
             }
         }
 
-
         protected override IPopulation EvolvedOneGeneration(IPopulation population)
         {
             // var parents = SelectParents(population);
@@ -73,6 +80,10 @@ namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies
             return population;
         }
 
+        /// <summary>
+        /// Mutate population
+        /// </summary>
+        /// <param name="individuals">List of curr indivual</param>
         public void Mutate(IList<IIndividual> individuals)
         {
             double?[] fits = new double?[individuals.Count];
@@ -100,7 +111,7 @@ namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies
                     c++;
             }
 
-            // 1/5 
+            // 1/5 rule
 
             var success = (double) c / individuals.Count;
 
@@ -135,6 +146,10 @@ namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies
             }
         }
 
+        /// <summary>
+        /// Mutate one ind.
+        /// </summary>
+        /// <param name="ind">Individual</param>
         void Mutate(IIndividual ind)
         {
             // last gene is sigma parameter
@@ -157,16 +172,34 @@ namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies
         }
 
 
+        /// <summary>
+        /// Crossover
+        /// </summary>
+        /// <param name="population">Pop</param>
+        /// <param name="parents">ist of parents</param>
+        /// <returns>list of children</returns>
         public IList<IIndividual> Cross(IPopulation population, IList<IIndividual> parents)
         {
             return executor.Cross(population, xover, xoverProbability, parents);
         }
 
+        /// <summary>
+        /// Reisert old ind to new gen.
+        /// </summary>
+        /// <param name="population">Population info</param>
+        /// <param name="offspring">New gen.</param>
+        /// <param name="parents">Parents</param>
+        /// <returns></returns>
         public IList<IIndividual> Reinsert(IPopulation population, IList<IIndividual> offspring, IList<IIndividual> parents)
         {
             return elite.EliteIndividuals(population.Size, offspring, parents);
         }
 
+        /// <summary>
+        /// Selection parents
+        /// </summary>
+        /// <param name="population"></param>
+        /// <returns>Ind for xover</returns>
         public IList<IIndividual> SelectParents(IPopulation population)
         {
             return selection.SelectIndividuals(population.Size, population);

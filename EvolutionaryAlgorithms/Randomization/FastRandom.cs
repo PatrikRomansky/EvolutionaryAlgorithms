@@ -10,6 +10,9 @@ namespace EvolutionaryAlgorithms.Randomization
 	/// </summary>
 	public class FastRandom
     {
+		/// <summary>
+		/// seed 161
+		/// </summary>
 		private static readonly Xorshift _globalRandom = new Xorshift(161);
 		private static readonly object _globalLock = new object();
 

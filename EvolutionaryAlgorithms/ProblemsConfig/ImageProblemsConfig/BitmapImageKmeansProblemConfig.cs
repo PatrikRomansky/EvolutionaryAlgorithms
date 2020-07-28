@@ -17,5 +17,14 @@ namespace EvolutionaryAlgorithms.ProblemsConfig.ImageProblemsConfig
         {
             return new IndividualKmeansBitmap(width, height, true, initColors);
         }
+
+        /// <summary>
+        /// Creates the individual.
+        /// </summary>
+        /// <returns>The individual.</returns>
+        public override IIndividual CreateEmptyIndividual()
+        {
+            return new IndividualKmeansBitmap(width, height, false, initColors);
+        }
     }
 }

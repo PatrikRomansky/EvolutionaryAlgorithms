@@ -11,11 +11,19 @@ namespace EvolutionaryAlgorithms.ProblemsConfig.ImageProblemsConfig
 {
     public class BaseTrianglesImageProblemConfig : ShapesImageProblemConfig
     {
+        /// <summary>
+        /// Creates the individual tri.
+        /// </summary>
+        /// <returns>The individual.</returns>
         public override IIndividual CreateEmptyIndividual()
         {
             return new IndividualTriangles(width, height, indSize, false);
         }
 
+        /// <summary>
+        /// Creates empty individual rectangles.
+        /// </summary>
+        /// <returns>The individual.</returns>
         public override IIndividual CreateIndividual()
         {
             return new IndividualTriangles(width, height, indSize);

@@ -6,7 +6,9 @@ using System.Drawing;
 
 namespace EvolutionaryAlgorithms.Individuals
 {
-
+    /// <summary>
+    /// Triangle gene instance.
+    /// </summary>
     public class GeneTriangle
     {
         public Point[] vertices;
@@ -20,8 +22,6 @@ namespace EvolutionaryAlgorithms.Individuals
 
             this.color = color;
         }
-
-
     }
 
     public class IndividualTriangles : IndividualShapes

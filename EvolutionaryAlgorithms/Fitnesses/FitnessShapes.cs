@@ -23,6 +23,11 @@ namespace EvolutionaryAlgorithms.Fitnesses
             Initialize(target);
         }
 
+        /// <summary>
+        /// Evaluete vector to raster fitness.
+        /// </summary>
+        /// <param name="individual">Evaluated ind.</param>
+        /// <returns>Fitness</returns>
         public double Evaluate(IIndividual individual)
         {
             double fitness = 0;
@@ -49,7 +54,10 @@ namespace EvolutionaryAlgorithms.Fitnesses
             return Math.Abs(px1.R - px2.R) + Math.Abs(px1.B - px2.B) + Math.Abs(px1.G - px2.G);
         }
 
-
+        /// <summary>
+        /// Targets bitmap init.
+        /// </summary>
+        /// <param name="target">Bitmap</param>
         public void Initialize(object target)
         {
             var bitmap = target as Bitmap;

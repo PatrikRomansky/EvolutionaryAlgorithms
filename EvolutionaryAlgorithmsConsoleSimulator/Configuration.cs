@@ -13,6 +13,11 @@ namespace EVAConsoleImageSimulator
 {
     public class Configuration
     {
+        /// <summary>
+        /// Retruns GA or {DE,ES,CMAES}
+        /// </summary>
+        /// <param name="problemConfig">Problem represention</param>
+        /// <returns>EA</returns>
         public static IEVA[] SetEVA(IProblemConfig[] problemConfig)
         {
             // Supported EVA types
@@ -43,6 +48,11 @@ namespace EVAConsoleImageSimulator
             return eva;
         }
 
+        /// <summary>
+        /// Configuration GA.
+        /// </summary>
+        /// <param name="problemConfig">Problem represention</param>
+        /// <returns>GA</returns>
         public static IEVA[] SetGA(IProblemConfig[] problemConfig)
         {
             Console.WriteLine("Custom Genetic algorithm.");
@@ -77,6 +87,11 @@ namespace EVAConsoleImageSimulator
             return evas;
         }
 
+        /// <summary>
+        /// Configuration ES.
+        /// </summary>
+        /// <param name="problemConfig">Problem represention</param>
+        /// <returns>ES</returns>
         public static IEVA[] SetES(IProblemConfig[] problemConfig)
         {
             Console.WriteLine("Evolutionary Strategy.");
@@ -101,6 +116,12 @@ namespace EVAConsoleImageSimulator
             return evas;
         }
 
+        /// <summary>
+        /// Console logger.
+        /// </summary>
+        /// <param name="eva">evolutionary alg.</param>
+        /// <param name="consoleProblemConfig">Problem represention</param>
+        /// <param name="logRate">logger rate</param>
         public void SetGenerationInfoLog(IEVA eva, IProblemConfig consoleProblemConfig, int logRate)
         {
             eva.CurrentGenerationInfo += delegate
@@ -122,6 +143,12 @@ namespace EVAConsoleImageSimulator
             };
         }
 
+        /// <summary>
+        /// Create a new folder
+        /// </summary>
+        /// <param name="path">File path</param>
+        /// <param name="subName">Additional name</param>
+        /// <returns></returns>
         public static string CreateDirectory(string path, string subName)
         {
             var inputImageFile = path;

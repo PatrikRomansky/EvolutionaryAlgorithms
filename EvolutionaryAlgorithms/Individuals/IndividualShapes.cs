@@ -23,6 +23,11 @@ namespace EvolutionaryAlgorithms.Individuals
             Height = height;
         }
 
+        /// <summary>
+        /// Draw gene to bitmap.
+        /// </summary>
+        /// <param name="img">Output image</param>
+        /// <param name="shape">Gene/shape</param>
         protected abstract void DrawShape(Image<Bgr, Byte> img, object shape);
 
         public override Bitmap BuildBitmap()
@@ -38,6 +43,11 @@ namespace EvolutionaryAlgorithms.Individuals
             return img.ToBitmap<Bgr, Byte>();
         }
 
+        /// <summary>
+        /// Truncate gene value.
+        /// </summary>
+        /// <param name="geneIndex">Gene index</param>
+        /// <returns>Truncated value.</returns>
         protected abstract double GetMaxGeneValue(int geneIndex);
 
         public override double GenerateGene(int geneIndex)

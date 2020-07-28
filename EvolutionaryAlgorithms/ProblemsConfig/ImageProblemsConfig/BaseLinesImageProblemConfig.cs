@@ -55,7 +55,7 @@ namespace EvolutionaryAlgorithms.ProblemsConfig.ImageProblemsConfig
         }
 
         /// <summary>
-        /// Creates the individual.
+        /// Creates the individual lines.
         /// </summary>
         /// <returns>The individual.</returns>
         public override IIndividual CreateIndividual()
@@ -118,6 +118,10 @@ namespace EvolutionaryAlgorithms.ProblemsConfig.ImageProblemsConfig
             };
         }
 
+        /// <summary>
+        /// Creates the individual lines.
+        /// </summary>
+        /// <returns>The Individual</returns>
         public override IIndividual CreateEmptyIndividual()
         {
             return new IndividualLines(width, height, indSize, false);

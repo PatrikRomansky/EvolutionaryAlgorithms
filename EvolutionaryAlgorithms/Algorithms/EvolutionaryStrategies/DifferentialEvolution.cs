@@ -25,7 +25,11 @@ namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies
         /// </summary>
         public double XoverProbability { get; set; }
 
-
+        /// <summary>
+        /// Constructor for DE.
+        /// </summary>
+        /// <param name="fitness">Fitness func.</param>
+        /// <param name="population">Init pop</param>
         public DifferentialEvolution(IFitness fitness, IPopulation population ): base(fitness, population)
         {
             this.XoverProbability = 0.9;
@@ -36,7 +40,11 @@ namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies
 
         }
 
-
+        /// <summary>
+        /// Evolved one generation.
+        /// </summary>
+        /// <param name="population">Curr. pop</param>
+        /// <returns>New generation</returns>
         protected override IPopulation EvolvedOneGeneration(IPopulation population)
         {
 
