@@ -32,7 +32,7 @@ namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies
             this.F = 0.5;
 
             termination = new TerminationMaxNumberGeneration();
-            termination.InitializeTerminationCondition(25_000);
+            termination.InitializeTerminationCondition(5_000);
 
         }
 

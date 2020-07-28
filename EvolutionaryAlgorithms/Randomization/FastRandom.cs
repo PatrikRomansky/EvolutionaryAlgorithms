@@ -10,7 +10,7 @@ namespace EvolutionaryAlgorithms.Randomization
 	/// </summary>
 	public class FastRandom
     {
-		private static readonly Xorshift _globalRandom = new Xorshift(DateTime.Now.Millisecond);
+		private static readonly Xorshift _globalRandom = new Xorshift(161);
 		private static readonly object _globalLock = new object();
 
 		/// <summary> 
@@ -35,7 +35,7 @@ namespace EvolutionaryAlgorithms.Randomization
 		/// Returns an instance of Random which can be used freely 
 		/// within the current thread. 
 		/// </summary> 
-		private static Xorshift Instance { get { return _threadRandom.Value; } }
+		public static Xorshift Instance { get { return _threadRandom.Value; } }
 
 
 		/// <summary>

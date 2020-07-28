@@ -11,7 +11,7 @@ using EvolutionaryAlgorithms.Individuals;
 namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies
 {
     /// <summary>
-    /// CMAES
+    /// CMA-ES main class.
     /// </summary>
     public class EVACMA_ES : EVA
     {
@@ -26,7 +26,9 @@ namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies
             // initialInd = population.CreateIndividual();
         }
 
-
+        /// <summary>
+        /// Create initial population.
+        /// </summary>
         protected override void CreatePopulation()
         {
             population.Individuals = new List<IIndividual>();
@@ -36,7 +38,11 @@ namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies
             cma = new CMA(initialInd, 1.5);
         }
 
-
+        /// <summary>
+        /// Evolved one generation.
+        /// </summary>
+        /// <param name="population">Current population.</param>
+        /// <returns>New generation.</returns>
         protected override IPopulation EvolvedOneGeneration(IPopulation population)
         {
             List<Tuple<Vector<double>,double>> solutions = new List<Tuple<Vector<double>, double>>();

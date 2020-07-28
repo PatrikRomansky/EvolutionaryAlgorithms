@@ -2,48 +2,33 @@
 using System.Collections.Generic;
 using System.Linq;
 using MathNet.Numerics.LinearAlgebra;
-using MathNet.Numerics.Random;
 using MathNet.Numerics.Distributions;
 using EvolutionaryAlgorithms.Individuals;
+using EvolutionaryAlgorithms.Randomization;
 
 namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies.CMA_ES
 {
+    /// <summary>
+    /// CMA-ES subclass.
+    /// </summary>
     public class CMA
     {
-        private readonly int _mu;
-        private readonly double _mu_eff;
-        private readonly double _cc;
-        private readonly double _c1;
-        private readonly double _cmu;
-        private readonly double _c_sigma;
-        private readonly double _d_sigma;
-        private readonly int _cm;
-        private readonly double _chi_n;
-        private readonly Vector<double> _weights;
-        private Vector<double> _p_sigma;
-        private Vector<double> _pc;
-        private Vector<double> _mean;
-        private Matrix<double> _C;
-        private double _sigma;
-        private Vector<double> _D;
-        private Matrix<double> _B;
-        private Matrix<double> _bounds;
-        private readonly int _n_max_resampling;
-        private readonly Xorshift _rng;
-        private readonly double _epsilon;
-
         /// <summary>
         /// A number of dimensions
         /// </summary>
-        public int Dimensions { get; }
-        /// <summary>
-        /// A population size
-        /// </summary>
-        public int PopSize { get; private set; }
+        public int Dimensions { get => Parameters.nDim; }
+
         /// <summary>
         /// Generation number which is monotonically incremented when multi-variate gaussian distribution is updated.
         /// </summary>
         public int CurrentGenerationsNumber { get; private set; }
+
+        public int PopSize { get => Parameters.PopSize; }
+
+        /// <summary>
+        /// CMA parameters
+        /// </summary>
+        CMAParameters Parameters;
 
         /// <summary>
         /// CMA-ES stochastic optimizer class with ask-and-tell interface.
@@ -55,105 +40,8 @@ namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies.CMA_ES
         /// If all sampled parameters are infeasible, the last sampled one  will be clipped with lower and upper bounds.</param>
         public CMA(IIndividual mean, double sigma, Matrix<double> bounds = null, int nMaxResampling = 100)
         {
-            if (!(sigma > 0))
-            {
-                throw new ArgumentOutOfRangeException("sigma must be non-zero positive value");
-            }
-
-            int nDim = mean.Length;
-            if (!(nDim > 1))
-            {
-                throw new ArgumentOutOfRangeException("The dimension of mean must be larger than 1");
-            }
-
-            int populationSize = 4 + (int)Math.Floor(3 * Math.Log(nDim));  // # (eq. 48)
-
-            int mu = populationSize / 2;
-
-            Vector<double> weightsPrime = Vector<double>.Build.Dense(populationSize);
-            for (int i = 0; i < populationSize; i++)
-            {
-                weightsPrime[i] = Math.Log((populationSize + 1) / (double)2) - Math.Log(i + 1);
-            }
-
-            Vector<double> weightsPrimeMuEff = Vector<double>.Build.Dense(weightsPrime.Take(mu).ToArray());
-            double mu_eff = Math.Pow(weightsPrimeMuEff.Sum(), 2) / Math.Pow(weightsPrimeMuEff.L2Norm(), 2);
-            Vector<double> weightsPrimeMuEffMinus = Vector<double>.Build.Dense(weightsPrime.Skip(mu).ToArray());
-            double muEffMinus = Math.Pow(weightsPrimeMuEffMinus.Sum(), 2) / Math.Pow(weightsPrimeMuEffMinus.L2Norm(), 2);
-
-            int alphacCov = 2;
-            double c1 = alphacCov / (Math.Pow(nDim + 1.3, 2) + mu_eff);
-            double cmu = Math.Min(1 - c1, alphacCov * (mu_eff - 2 + (1 / mu_eff)) / (Math.Pow(nDim + 2, 2) + (alphacCov * mu_eff / 2)));
-            if (!(c1 <= 1 - cmu))
-            {
-                throw new Exception("invalid learning rate for the rank-one update");
-            }
-            if (!(cmu <= 1 - c1))
-            {
-                throw new Exception("invalid learning rate for the rank-μ update");
-            }
-
-            double minAlpha = Math.Min(1 + (c1 / cmu), Math.Min(1 + (2 * muEffMinus / (mu_eff + 2)), (1 - c1 - cmu) / (nDim * cmu)));
-
-            double positiveSum = weightsPrime.Where(x => x > 0).Sum();
-            double negativeSum = Math.Abs(weightsPrime.Where(x => x < 0).Sum());
-
-            Vector<double> weights = Vector<double>.Build.Dense(weightsPrime.Count);
-            weightsPrime.CopyTo(weights);
-            bool[] weightsIsNotNegative = weightsPrime.Select(x => x >= 0).ToArray();
-            for (int i = 0; i < weights.Count; i++)
-            {
-                weights[i] = weightsIsNotNegative[i] ? 1 / positiveSum * weightsPrime[i] : minAlpha / negativeSum * weightsPrime[i];
-            }
-            int cm = 1;
-
-            double c_sigma = (mu_eff + 2) / (nDim + mu_eff + 5);
-            double d_sigma = 1 + (2 * Math.Max(0, Math.Sqrt((mu_eff - 1) / (nDim + 1)) - 1)) + c_sigma;
-            if (!(c_sigma < 1))
-            {
-                throw new Exception("invalid learning rate for cumulation for the step-size control");
-            }
-
-            double cc = (4 + (mu_eff / nDim)) / (nDim + 4 + (2 * mu_eff / nDim));
-            if (!(cc <= 1))
-            {
-                throw new Exception("invalid learning rate for cumulation for the rank-one update");
-            }
-
-            Dimensions = nDim;
-            PopSize = populationSize;
-            _mu = mu;
-            _mu_eff = mu_eff;
-
-            _cc = cc;
-            _c1 = c1;
-            _cmu = cmu;
-            _c_sigma = c_sigma;
-            _d_sigma = d_sigma;
-            _cm = cm;
-
-            _chi_n = Math.Sqrt(Dimensions) * (1.0 - (1.0 / (4.0 * Dimensions)) + 1.0 / (21.0 * (Math.Pow(Dimensions, 2))));
-
-            _weights = weights;
-
-            _p_sigma = Vector<double>.Build.Dense(Dimensions, 0);
-            _pc = Vector<double>.Build.Dense(Dimensions, 0);
-
-            _mean = Vector<double>.Build.DenseOfArray(mean.GetGenes().ToArray());
-            _C = Matrix<double>.Build.DenseIdentity(Dimensions, Dimensions);
-            _sigma = sigma;
-
-            if (!(bounds == null || (bounds.RowCount == Dimensions && bounds.ColumnCount == 2)))
-            {
-                throw new Exception("bounds should be (n_dim, 2)-dim matrix");
-            }
-            _bounds = bounds;
-            _n_max_resampling = nMaxResampling;
-
+            Parameters = new CMAParameters(mean, sigma,  bounds, nMaxResampling);
             CurrentGenerationsNumber = 0;
-            _rng = new Xorshift();
-
-            _epsilon = 1e-8;
         }
 
         /// <summary>
@@ -162,14 +50,14 @@ namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies.CMA_ES
         /// <returns>The next search vector.</returns>
         public Vector<double> Ask()
         {
-            for (int i = 0; i < _n_max_resampling; i++)
+            for (int i = 0; i < Parameters.n_max_resampling; i++)
             {
-                Vector<double> x = SampleSolution();
-                if (IsFeasible(x))
+                Vector<double> x = Parameters.SampleSolution();
+                if (Parameters.IsFeasible(x))
                     return x;
             }
-            Vector<double> xNew = SampleSolution();
-            xNew = RepairInfeasibleParams(xNew);
+            Vector<double> xNew = Parameters.SampleSolution();
+            xNew = Parameters.RepairInfeasibleParams(xNew);
             return xNew;
         }
 
@@ -179,7 +67,7 @@ namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies.CMA_ES
         /// <param name="solutions">Tuple's list of search vectors and result values.</param>
         public void Tell(List<Tuple<Vector<double>, double>> solutions)
         {
-            if (solutions.Count != PopSize)
+            if (solutions.Count != Parameters.PopSize)
             {
                 throw new ArgumentException("Must tell popsize-length solutions.");
             }
@@ -188,45 +76,45 @@ namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies.CMA_ES
             Tuple<Vector<double>, double>[] sortedSolutions = solutions.OrderBy(x => x.Item2).ToArray();
 
             // Sample new population of search_points, for k=1, ..., popsize
-            Matrix<double> B = Matrix<double>.Build.Dense(_B.RowCount, _B.ColumnCount);
-            Vector<double> D = Vector<double>.Build.Dense(_D.Count);
-            if (_B == null || _D == null)
+            Matrix<double> B = Matrix<double>.Build.Dense(Parameters._B.RowCount, Parameters._B.ColumnCount);
+            Vector<double> D = Vector<double>.Build.Dense(Parameters._D.Count);
+            if (Parameters._B == null || Parameters._D == null)
             {
-                _C = (_C + _C.Transpose()) / 2;
-                MathNet.Numerics.LinearAlgebra.Factorization.Evd<double> evd_C = _C.Evd();
+                Parameters.C = (Parameters.C + Parameters.C.Transpose()) / 2;
+                MathNet.Numerics.LinearAlgebra.Factorization.Evd<double> evd_C = Parameters.C.Evd();
                 B = evd_C.EigenVectors;
                 D = Vector<double>.Build.Dense(evd_C.EigenValues.PointwiseSqrt().Select(tmp => tmp.Real).ToArray());
             }
             else
             {
-                _B.CopyTo(B);
-                _D.CopyTo(D);
+               Parameters._B.CopyTo(B);
+               Parameters. _D.CopyTo(D);
             }
-            _B = null;
-            _D = null;
+            Parameters._B = null;
+            Parameters._D = null;
 
             Matrix<double> x_k = Matrix<double>.Build.DenseOfRowVectors(sortedSolutions.Select(x => x.Item1));
             Matrix<double> y_k = Matrix<double>.Build.Dense(sortedSolutions.Length, Dimensions);
             for (int i = 0; i < sortedSolutions.Length; i++)
             {
-                y_k.SetRow(i, (x_k.Row(i) - _mean) / _sigma);
+                y_k.SetRow(i, (x_k.Row(i) - Parameters._mean) / Parameters.sigma);
             }
 
             // Selection and recombination
-            Vector<double>[] kk = y_k.EnumerateRows().Take(_mu).ToArray();
+            Vector<double>[] kk = y_k.EnumerateRows().Take(Parameters.mu).ToArray();
             Matrix<double> y_k_T = Matrix<double>.Build.Dense(Dimensions, kk.Length);
             for (int i = 0; i < kk.Length; i++)
             {
                 y_k_T.SetColumn(i, kk[i]);
             }
-            Vector<double> subWeights = Vector<double>.Build.Dense(_weights.Take(_mu).ToArray());
+            Vector<double> subWeights = Vector<double>.Build.Dense(Parameters._weights.Take(Parameters.mu).ToArray());
             Matrix<double> y_w_matrix = Matrix<double>.Build.Dense(y_k_T.RowCount, y_k_T.ColumnCount);
             for (int i = 0; i < y_w_matrix.RowCount; i++)
             {
                 y_w_matrix.SetRow(i, y_k_T.Row(i).PointwiseMultiply(subWeights));
             }
             Vector<double> y_w = y_w_matrix.RowSums();
-            _mean += _cm * _sigma * y_w;
+            Parameters._mean += Parameters.cm * Parameters.sigma * y_w;
 
             Vector<double> D_bunno1_diag = 1 / D;
             Matrix<double> D_bunno1_diagMatrix = Matrix<double>.Build.Dense(D_bunno1_diag.Count, D_bunno1_diag.Count);
@@ -235,106 +123,44 @@ namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies.CMA_ES
                 D_bunno1_diagMatrix[i, i] = D_bunno1_diag[i];
             }
             Matrix<double> C_2 = B * D_bunno1_diagMatrix * B;
-            _p_sigma = ((1 - _c_sigma) * _p_sigma) + (Math.Sqrt(_c_sigma * (2 - _c_sigma) * _mu_eff) * C_2 * y_w);
+            Parameters.p_sigma = ((1 - Parameters.c_sigma) * Parameters.p_sigma) + (Math.Sqrt(Parameters.c_sigma * (2 - Parameters.c_sigma) * Parameters.mu_eff) * C_2 * y_w);
 
-            double norm_pSigma = _p_sigma.L2Norm();
-            _sigma *= Math.Exp(_c_sigma / _d_sigma * ((norm_pSigma / _chi_n) - 1));
-            double h_sigma_cond_left = norm_pSigma / Math.Sqrt(1 - Math.Pow(1 - _c_sigma, 2 * (CurrentGenerationsNumber + 1)));
-            double h_sigma_cond_right = (1.4 + (2 / (double)(Dimensions + 1))) * _chi_n;
+            double norm_pSigma = Parameters.p_sigma.L2Norm();
+            Parameters.sigma *= Math.Exp(Parameters.c_sigma / Parameters.d_sigma * ((norm_pSigma / Parameters.chi_n) - 1));
+            double h_sigma_cond_left = norm_pSigma / Math.Sqrt(1 - Math.Pow(1 - Parameters.c_sigma, 2 * (CurrentGenerationsNumber + 1)));
+            double h_sigma_cond_right = (1.4 + (2 / (double)(Dimensions + 1))) * Parameters.chi_n;
             double h_sigma = h_sigma_cond_left < h_sigma_cond_right ? 1.0 : 0.0;
 
-            _pc = ((1 - _cc) * _pc) + (h_sigma * Math.Sqrt(_cc * (2 - _cc) * _mu_eff) * y_w);
+            Parameters.pc = ((1 - Parameters.cc) * Parameters.pc) + (h_sigma * Math.Sqrt(Parameters.cc * (2 - Parameters.cc) * Parameters.mu_eff) * y_w);
 
-            Vector<double> w_io = Vector<double>.Build.Dense(_weights.Count, 1);
+            Vector<double> w_io = Vector<double>.Build.Dense(Parameters._weights.Count, 1);
             Vector<double> w_iee = (C_2 * y_k.Transpose()).ColumnNorms(2).PointwisePower(2);
-            for (int i = 0; i < _weights.Count; i++)
+            for (int i = 0; i < Parameters._weights.Count; i++)
             {
-                if (_weights[i] >= 0)
+                if (Parameters._weights[i] >= 0)
                 {
-                    w_io[i] = _weights[i] * 1;
+                    w_io[i] = Parameters._weights[i] * 1;
                 }
                 else
                 {
-                    w_io[i] = _weights[i] * Dimensions / (w_iee[i] + _epsilon);
+                    w_io[i] = Parameters._weights[i] * Dimensions / (w_iee[i] + Parameters.epsilon);
                 }
             }
 
-            double delta_h_sigma = (1 - h_sigma) * _cc * (2 - _cc);
+            double delta_h_sigma = (1 - h_sigma) * Parameters.cc * (2 - Parameters.cc);
+           
             if (!(delta_h_sigma <= 1))
             {
                 throw new Exception("invalid value of delta_h_sigma");
             }
 
-            Matrix<double> rank_one = _pc.OuterProduct(_pc);
+            Matrix<double> rank_one = Parameters.pc.OuterProduct(Parameters.pc);
             Matrix<double> rank_mu = Matrix<double>.Build.Dense(y_k.ColumnCount, y_k.ColumnCount, 0);
             for (int i = 0; i < w_io.Count; i++)
             {
                 rank_mu += w_io[i] * y_k.Row(i).OuterProduct(y_k.Row(i));
             }
-            _C = ((1 + (_c1 * delta_h_sigma) - _c1 - (_cmu * _weights.Sum())) * _C) + (_c1 * rank_one) + (_cmu * rank_mu);
-        }
-
-        private Vector<double> RepairInfeasibleParams(Vector<double> param)
-        {
-            if (_bounds == null)
-            {
-                return param;
-            }
-            Vector<double> newParam = param.PointwiseMaximum(_bounds.Column(0));
-            newParam = newParam.PointwiseMinimum(_bounds.Column(1));
-            return newParam;
-        }
-
-        private bool IsFeasible(Vector<double> param)
-        {
-            if (_bounds == null)
-            {
-                return true;
-            }
-            bool isCorrectLower = true;
-            bool isCorrectUpper = true;
-            for (int i = 0; i < param.Count; i++)
-            {
-                isCorrectLower &= param[i] >= _bounds[i, 0];
-                isCorrectUpper &= param[i] <= _bounds[i, 1];
-            }
-            return isCorrectLower & isCorrectUpper;
-        }
-
-        private Vector<double> SampleSolution()
-        {
-            if (_B == null || _D == null)
-            {
-                _C = (_C + _C.Transpose()) / 2;
-                MathNet.Numerics.LinearAlgebra.Factorization.Evd<double> evd_C = _C.Evd();
-                Matrix<double> B = evd_C.EigenVectors;
-                Vector<double> D = Vector<double>.Build.Dense(evd_C.EigenValues.PointwiseSqrt().Select(tmp => tmp.Real).ToArray());
-                D += _epsilon;
-                _B = B;
-                _D = D;
-                Matrix<double> D2diagonal = Matrix<double>.Build.DenseDiagonal(D.Count, 1);
-                Vector<double> Dpow2 = D.PointwisePower(2);
-                for (int i = 0; i < D2diagonal.RowCount; i++)
-                {
-                    D2diagonal[i, i] = Dpow2[i];
-                }
-                Matrix<double> BD2 = B * D2diagonal;
-                _C = BD2 * B.Transpose();
-            }
-
-            Vector<double> z = Vector<double>.Build.Dense(Dimensions);
-            for (int i = 0; i < z.Count; i++)
-            {
-                z[i] = Normal.Sample(_rng, 0, 1);
-            }
-            Matrix<double> Ddiagonal = Matrix<double>.Build.DenseDiagonal(_D.Count, 1);
-            for (int i = 0; i < Ddiagonal.RowCount; i++)
-            {
-                Ddiagonal[i, i] = _D[i];
-            }
-            Matrix<double> y = _B * Ddiagonal * z.ToColumnMatrix();
-            Vector<double> x = _mean + (_sigma * y.Column(0));
-            return x;
+            Parameters.C = ((1 + (Parameters.c1 * delta_h_sigma) - Parameters.c1 - (Parameters.cmu * Parameters._weights.Sum())) * Parameters.C) + (Parameters.c1 * rank_one) + (Parameters.cmu * rank_mu);
         }
     }
 }

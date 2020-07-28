@@ -53,7 +53,7 @@ namespace EvolutionaryAlgorithms.ProblemsConfig.ImageProblemsConfig
         {
             GA = ga;
             ga.TerminationReached += (sender, args) =>
-            {   /**/    
+            {   /*/    
                 using (var collection = new MagickImageCollection())
                 {
                     var files = Directory.GetFiles(m_destFolder, "*.png");
@@ -339,7 +339,7 @@ namespace EvolutionaryAlgorithms.ProblemsConfig.ImageProblemsConfig
         {
             var destRect = new Rectangle(0, 0, newWidth, newHeight);
             var destImage = new Bitmap(newWidth, newHeight);
-            /**/
+            /*/
             destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
 
             using (var graphics = Graphics.FromImage(destImage))

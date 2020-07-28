@@ -14,7 +14,7 @@ using System;
 
 namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies
 {
-    public class SelfAdaptation : EVA
+    public class ES_μ_λ : EVA
     {
         protected float mutationProbability;
         protected float xoverProbability;
@@ -25,13 +25,13 @@ namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies
         protected ISelection selection;
         private readonly Xorshift _rng;
 
-        public SelfAdaptation(IFitness fitness, IPopulation population) : base(fitness, population)
+        public ES_μ_λ(IFitness fitness, IPopulation population) : base(fitness, population)
         {
             xover  = new XoverUniform();
             elite = new EliteByFitness(0.1);
             selection = new SelectionTournament();
             termination = new TerminationMaxNumberGeneration();
-            termination.InitializeTerminationCondition(15_000);
+            termination.InitializeTerminationCondition(5_000);
             mutationProbability = 0.7f;
             xoverProbability = 0.5f;
             _rng = new Xorshift();

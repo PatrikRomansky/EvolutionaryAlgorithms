@@ -115,9 +115,9 @@ namespace EVAConsoleImageSimulator
 
                 var best = consoleProblemConfig.ShowBestIndividual(bestIndividual, logRate);
 
-                var fit = eva.CurrentGenerationsNumber + ";" + (1 / bestIndividual.Fitness);
+                var fit = eva.CurrentGenerationsNumber + ";" + (bestIndividual.Fitness);
                 var elapsedTimeSpeed = eva.CurrentGenerationsNumber + ";" + speed;
-                var allInfo = eva.CurrentGenerationsNumber + ";" + (1 / bestIndividual.Fitness) + ";" + eva.TimeEvolving + ";" + speed;
+                var allInfo = eva.CurrentGenerationsNumber + ";" + (bestIndividual.Fitness) + ";" + eva.TimeEvolving + ";" + speed;
                 consoleProblemConfig.SetGenerationInfo(fit, elapsedTimeSpeed, allInfo);
             };
         }

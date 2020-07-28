@@ -93,8 +93,9 @@
     <Compile Include="Algorithms\EVA.cs" />
     <Compile Include="Algorithms\EvolutionaryStrategies\CMA-ES\CMA.cs" />
     <Compile Include="Algorithms\EvolutionaryStrategies\CMA-ES\EVACMA-ES.cs" />
+    <Compile Include="Algorithms\EvolutionaryStrategies\CMA-ES\CMAParameters.cs" />
     <Compile Include="Algorithms\EvolutionaryStrategies\DifferentialEvolution.cs" />
-    <Compile Include="Algorithms\EvolutionaryStrategies\EVASelf-Adaptation.cs" />
+    <Compile Include="Algorithms\EvolutionaryStrategies\ES_μ_λ.cs" />
     <Compile Include="Algorithms\Executors\IExecutor.cs" />
     <Compile Include="Algorithms\Executors\LinearExecutor.cs" />
     <Compile Include="Algorithms\Executors\ParallelExecutor.cs" />
@@ -104,6 +105,7 @@
     <Compile Include="ElitistPrivileges\EliteNon.cs" />
     <Compile Include="ElitistPrivileges\IElite.cs" />
     <Compile Include="Fitnesses\FitnessBitmap.cs" />
+    <Compile Include="Fitnesses\FitnessIdentical.cs" />
     <Compile Include="Fitnesses\FitnessLines.cs" />
     <Compile Include="Fitnesses\FitnessShapes.cs" />
     <Compile Include="Fitnesses\IFitness.cs" />

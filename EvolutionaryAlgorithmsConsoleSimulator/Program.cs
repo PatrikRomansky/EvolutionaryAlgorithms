@@ -91,6 +91,7 @@ namespace EVAConsoleImageSimulator
 
         public static void RunImage(Type problemConfigName, string inputFileName, int logRate)
         {
+
             // Scale img
             var paramterScale = ParameterSetter.SetFloat("Scale", 0.01f, 1);
 
@@ -112,13 +113,12 @@ namespace EVAConsoleImageSimulator
 
         static void Main(string[] args)
         {
-           
             bool running = true;
             
             while (running)
             {
                 Console.Clear();
-                
+
                 Console.WriteLine("Evolution image approximation.");
 
                 var paralelization = ParameterSetter.SetBool("Parallelization");
