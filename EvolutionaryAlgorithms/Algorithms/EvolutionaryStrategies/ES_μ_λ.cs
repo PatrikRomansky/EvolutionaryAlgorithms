@@ -23,7 +23,6 @@ namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies
         protected IXover xover;
         protected IElite elite;
         protected ISelection selection;
-        private readonly Xorshift _rng;
 
         /// <summary>
         /// Evolutionary strategy
@@ -36,11 +35,9 @@ namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies
             elite = new EliteByFitness(0.1);
             selection = new SelectionTournament();
             termination = new TerminationMaxNumberGeneration();
-            termination.InitializeTerminationCondition(5_000);
-            mutationProbability = 0.7f;
+            termination.InitializeTerminationCondition(15_000);
+            mutationProbability = 0.01f;
             xoverProbability = 0.5f;
-            _rng = new Xorshift();
-
         }
 
         /// <summary>
@@ -54,7 +51,7 @@ namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies
 
             foreach (var ind in population.Individuals)
             {
-                var sigma = Normal.Sample(_rng, 0, 50);
+                var sigma = Normal.Sample(FastRandom.Instance, 0, 25);
 
                 if (sigma < Double.Epsilon)
                     sigma = Double.Epsilon;
@@ -122,7 +119,7 @@ namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies
                 {
 
                     var index = ind.Length - 1;
-                    var sigma = ind.GetGene(index) + Normal.Sample(_rng, 0, 1);
+                    var sigma = ind.GetGene(index) + Normal.Sample(FastRandom.Instance, 0, 1);
 
 
                     ind.ReplaceGene(index, sigma);
@@ -134,7 +131,7 @@ namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies
                 foreach (var ind in individuals)
                 {
                     var index = ind.Length - 1;
-                    var sigma = ind.GetGene(index) - Normal.Sample(_rng, 0, 1);
+                    var sigma = ind.GetGene(index) - Normal.Sample(FastRandom.Instance, 0, 1);
 
 
                     if (sigma < Double.Epsilon)
@@ -163,7 +160,7 @@ namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies
                 {
                     var g = ind.GetGene(index);
 
-                    var s = Normal.Sample(_rng, 0, sigma);
+                    var s = Normal.Sample(FastRandom.Instance, 0, sigma);
 
                     ind.ReplaceGene(index, g + s);
                 }

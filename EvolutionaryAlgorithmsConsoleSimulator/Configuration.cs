@@ -18,8 +18,9 @@ namespace EVAConsoleImageSimulator
         /// </summary>
         /// <param name="problemConfig">Problem represention</param>
         /// <returns>EA</returns>
-        public static IEVA[] SetEVA(IProblemConfig[] problemConfig)
+        public static IEVA[] SetEVA(IProblemConfig[] problemConfig, bool parallelization)
         {
+
             // Supported EVA types
             Console.WriteLine("Select:");
             Console.WriteLine("1. GA");
@@ -34,14 +35,14 @@ namespace EVAConsoleImageSimulator
             switch (index)
             {
                 case ("1"):
-                    eva = SetGA(problemConfig);
+                    eva = SetGA(problemConfig, parallelization);
                     break;
                 case ("2"):
-                    eva = SetES(problemConfig);
+                    eva = SetES(problemConfig, parallelization);
                     break;
                 default:
                     Console.WriteLine("Wrong selection.");
-                    eva = SetEVA(problemConfig);
+                    eva = SetEVA(problemConfig, parallelization);
                     break;
             }
 
@@ -53,7 +54,7 @@ namespace EVAConsoleImageSimulator
         /// </summary>
         /// <param name="problemConfig">Problem represention</param>
         /// <returns>GA</returns>
-        public static IEVA[] SetGA(IProblemConfig[] problemConfig)
+        public static IEVA[] SetGA(IProblemConfig[] problemConfig, bool parlelization)
         {
             Console.WriteLine("Custom Genetic algorithm.");
             var termination = ParameterSetter.SetTermination(problemConfig[0]);
@@ -92,7 +93,7 @@ namespace EVAConsoleImageSimulator
         /// </summary>
         /// <param name="problemConfig">Problem represention</param>
         /// <returns>ES</returns>
-        public static IEVA[] SetES(IProblemConfig[] problemConfig)
+        public static IEVA[] SetES(IProblemConfig[] problemConfig, bool parallelization)
         {
             Console.WriteLine("Evolutionary Strategy.");
             var evaName = ParameterSetter.SetEvaES();

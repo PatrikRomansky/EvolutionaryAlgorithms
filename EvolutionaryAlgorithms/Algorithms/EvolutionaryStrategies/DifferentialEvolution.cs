@@ -30,13 +30,13 @@ namespace EvolutionaryAlgorithms.Algorithms.EvolutionaryStrategies
         /// </summary>
         /// <param name="fitness">Fitness func.</param>
         /// <param name="population">Init pop</param>
-        public DifferentialEvolution(IFitness fitness, IPopulation population ): base(fitness, population)
+        public DifferentialEvolution(IFitness fitness, IPopulation population): base(fitness, population)
         {
-            this.XoverProbability = 0.9;
+            this.XoverProbability = 0.01;
             this.F = 0.5;
 
             termination = new TerminationMaxNumberGeneration();
-            termination.InitializeTerminationCondition(5_000);
+            termination.InitializeTerminationCondition(15_000);
 
         }
 

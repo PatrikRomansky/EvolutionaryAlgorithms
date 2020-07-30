@@ -1,6 +1,4 @@
-﻿using Emgu.CV;
-using Emgu.CV.Structure;
-using EvolutionaryAlgorithms.ElitistPrivileges;
+﻿using EvolutionaryAlgorithms.ElitistPrivileges;
 using EvolutionaryAlgorithms.Fitnesses;
 using EvolutionaryAlgorithms.Individuals;
 using EvolutionaryAlgorithms.Operators.Mutations;
@@ -10,17 +8,33 @@ using EvolutionaryAlgorithms.Terminations;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace EvolutionaryAlgorithms.ProblemsConfig.ImageProblemsConfig
 {
-    /// <summary>
-    /// Controller for individual, which genes represent line image (sketch). 
-    /// Basic operators selected on the basis of previous .
-    /// </summary>
-    public class BaseLinesImageProblemConfig :ImageProblemConfig
+    public class BaseGarayScaleImageProblemConfig: ImageProblemConfig
     {
-        // number of lines
-        private int indSize;
+        /// <summary>
+        /// Creates the individual.
+        /// </summary>
+        /// <returns>The individual.</returns>
+        public override IIndividual CreateIndividual()
+        {
+            return new IndividualBitmapGrayScale(width, height);
+        }
+
+
+        /// <summary>
+        /// Creates the individual.
+        /// </summary>
+        /// <returns>The individual.</returns>
+        public override IIndividual CreateEmptyIndividual()
+        {
+            return new IndividualBitmapGrayScale(width, height, false);
+        }
+
 
         /// <summary>
         /// Initializes this instance.
@@ -28,11 +42,8 @@ namespace EvolutionaryAlgorithms.ProblemsConfig.ImageProblemsConfig
         public override void Initialize(string targetInputfileName)
         {
             var targetBitmap = this.InititializeSame(targetInputfileName);
-
-
-
-            var fit = new FitnessLines(targetBitmap.ToImage<Gray, byte>());
-            indSize = fit.targetSize;
+            /// var targetBitmap = img
+            var fit = new FitnessBitmap(targetBitmap);
             fitness = fit;
 
             base.Initialize(targetInputfileName);
@@ -49,26 +60,16 @@ namespace EvolutionaryAlgorithms.ProblemsConfig.ImageProblemsConfig
             rawWidth = width;
             rawHeight = height;
 
-
-            var fit = new FitnessLines(targetBitmap.ToImage<Gray, byte>());
-            indSize = fit.targetSize;
+            /// var targetBitmap = img
+            var fit = new FitnessBitmap(targetBitmap);
             fitness = fit;
 
             base.Initialize(targetInputfileName);
         }
 
         /// <summary>
-        /// Creates the individual lines.
+        /// Initializes possible xoversfor this instance.
         /// </summary>
-        /// <returns>The individual.</returns>
-        public override IIndividual CreateIndividual()
-        {
-            return new IndividualLines(width, height, indSize);
-        }
-
-        /// <summary>
-        /// Initializes possible crossoversfor this instance.
-        /// </summary
         public override void InitializeXovers()
         {
             this.xovers = new Dictionary<string, Type>
@@ -78,7 +79,7 @@ namespace EvolutionaryAlgorithms.ProblemsConfig.ImageProblemsConfig
         }
 
         /// <summary>
-        /// Initializes possible elitizmuses for this instance.
+        /// Initializes possible elities for this instance.
         /// </summary>
         public override void InitializeElities()
         {
@@ -95,7 +96,7 @@ namespace EvolutionaryAlgorithms.ProblemsConfig.ImageProblemsConfig
         {
             this.mutations = new Dictionary<string, Type>
             {
-                { typeof(MutationShift).Name, typeof(MutationShift)}
+                {typeof(MutationTwors).Name, typeof(MutationTwors)}
             };
         }
 
@@ -119,15 +120,6 @@ namespace EvolutionaryAlgorithms.ProblemsConfig.ImageProblemsConfig
             {
                 {typeof(TerminationMaxNumberGeneration).Name, typeof(TerminationMaxNumberGeneration)}
             };
-        }
-
-        /// <summary>
-        /// Creates the individual lines.
-        /// </summary>
-        /// <returns>The Individual</returns>
-        public override IIndividual CreateEmptyIndividual()
-        {
-            return new IndividualLines(width, height, indSize, false);
         }
     }
 }

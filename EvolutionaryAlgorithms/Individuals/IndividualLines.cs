@@ -11,7 +11,7 @@ namespace EvolutionaryAlgorithms.Individuals
     /// The image passes edge detection (canny detection) and then lienes detection (HoughLinesP).
     /// Individual genes represent line image (sketch).
     /// </summary>
-    public class IndividualLines: IndividualImage
+    public class IndividualLines : IndividualImage
     {
 
         private int numberOfLines;
@@ -150,7 +150,7 @@ namespace EvolutionaryAlgorithms.Individuals
         {
             maxGeneValue = Height;
 
-            if(index % 2 == 0)
+            if (index % 2 == 0)
                 maxGeneValue = Width;
 
             if (gene > maxGeneValue)
