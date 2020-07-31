@@ -144,9 +144,9 @@ namespace EVAConsoleImageSimulator
 
 
                 if (paralelization)
-                    RunParallelImage(problemConfigName, inputFileName, logRate);
+                    RunParallelImage(problemConfigName, inputFileName, logRate, paralelization);
                 else
-                    RunImage(problemConfigName, inputFileName, logRate);
+                    RunImage(problemConfigName, inputFileName, logRate, paralelization);
 
                 Console.WriteLine("EVOLVED");
                 running = ParameterSetter.SetBool("RESTART");
