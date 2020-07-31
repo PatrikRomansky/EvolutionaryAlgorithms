@@ -1,4 +1,4 @@
-﻿using EvolutionaryAlgorithms.Algorithms;
+using EvolutionaryAlgorithms.Algorithms;
 using EvolutionaryAlgorithms.ImageProcessing;
 using EvolutionaryAlgorithms.Individuals;
 using EvolutionaryAlgorithms.ProblemsConfig.ImageProblemsConfig;
@@ -19,7 +19,7 @@ namespace EVAConsoleImageSimulator
         /// <param name="problemConfigName">Problem represention.</param>
         /// <param name="inputFileName">Input image</param>
         /// <param name="logRate">logger rate</param>
-        public static void RunParallelImage(Type problemConfigName, string inputFileName, int logRate)
+        public static void RunParallelImage(Type problemConfigName, string inputFileName, int logRate, bool parallelization)
         {
 
             var img = Image.FromFile(inputFileName) as Bitmap;
@@ -44,7 +44,7 @@ namespace EVAConsoleImageSimulator
                 configuration[i] = new Configuration();
             }
 
-            evas = Configuration.SetEVA(consoleProblemConfigs);
+            evas = Configuration.SetEVA(consoleProblemConfigs, parallelization);
 
             for (int i = 0; i < targets.Length; i++)
             {
@@ -100,7 +100,7 @@ namespace EVAConsoleImageSimulator
         /// <param name="problemConfigName">Problem represention.</param>
         /// <param name="inputFileName">Input image</param>
         /// <param name="logRate">logger rate</param>
-        public static void RunImage(Type problemConfigName, string inputFileName, int logRate)
+        public static void RunImage(Type problemConfigName, string inputFileName, int logRate, bool parallelization)
         {
 
             // Scale img
@@ -113,7 +113,7 @@ namespace EVAConsoleImageSimulator
             consoleProblemConfig.InitializeScale(paramterScale);
             consoleProblemConfig.Initialize(inputFileName);
 
-            var eva = Configuration.SetEVA(new[] { consoleProblemConfig});
+            var eva = Configuration.SetEVA(new[] { consoleProblemConfig}, parallelization);
             var configuration = new Configuration();
 
 
