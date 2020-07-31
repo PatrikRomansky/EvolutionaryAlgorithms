@@ -1,4 +1,4 @@
-﻿using EvolutionaryAlgorithms.Algorithms;
+using EvolutionaryAlgorithms.Algorithms;
 using EvolutionaryAlgorithms.Individuals;
 using EvolutionaryAlgorithms.Populations;
 using EvolutionaryAlgorithms.ProblemsConfig;
