@@ -1,0 +1,221 @@
+import pandas as pd
+from DataPreparation import DataPreparation
+import numpy as np
+from Models.EASEModel import EASE
+import Helpers.Database.SQLHelper as SQLHelper
+import Models.Helpers.AutoencoderRS_methods as AERS_methods
+import os
+from Helpers.Helper_Functions import csv_files_folder
+from datetime import datetime
+import pytz
+import Helpers.Database.db_connect as db
+import psycopg2
+import psycopg2.extras
+import pickle 
+
+
+def load_obj_model(filename):
+    file_ease = open('result_models/{0}.obj'.format(filename), 'rb') 
+    model = pickle.load(file_ease)
+    file_ease.close()
+    return model
+
+def save_matrix_B(model, table_name= 'work.ease_B'):
+    print("- {0} - Save matrix B...".format(datetime.now(pytz.timezone('Europe/Prague')).strftime("%Y-%m-%d -- %H:%M:%S")))
+    
+    shp = model.B.shape
+    r,c = np.indices(shp)
+    df = pd.DataFrame(
+           np.c_[
+               model.merchant_enc.inverse_transform(r.ravel()), 
+               model.merchant_enc.inverse_transform(c.ravel()), 
+               model.B.ravel('F')
+           ], 
+           columns=((['column_merchant','row_merchant','value']))
+    )
+
+    # using dictionary to convert specific columns
+    convert_dict = {
+                    'column_merchant': int,
+                    'row_merchant': int
+                    }
+
+    df = df.astype(convert_dict)
+
+    con = db.connect(db_name)
+    batch_size = 1000_000
+    number_of_batch = len(df) // batch_size
+
+    for batch_number, batch_df in df.groupby(np.arange(len(df)) // batch_size):
+        print("-- {0} - Save batch {1} // {2}.".format(datetime.now(pytz.timezone('Europe/Prague')).strftime("%Y-%m-%d -- %H:%M:%S"), batch_number, number_of_batch))      
+        SQLHelper.insert_to_table(batch_df, table_name, con)
+    con.close()   
+
+def compute_from_previous_model(db_name, input_table, output_table, model_name, candidates=None):
+    
+    ease_model = load_obj_model(model_name)
+
+    connection = db.connect(db_name)
+    curr = connection.cursor()
+    curr.execute('truncate table {0}'.format(output_table))
+    count = curr.rowcount
+    curr.close()
+    connection.commit()
+    connection.close()
+
+    df, connection = SQLHelper.load_from_table(db_name, input_table)
+    
+    ease_model.load_newX(df)
+    
+    train, train_clients, _ = AERS_methods.get_train(df)
+    train_merchants = ease_model.merchant_enc.inverse_transform(range(ease_model.B.shape[0]))
+
+    if (candidates is None) or (len(candidates)==0):
+        candidates = train_merchants
+    
+    AERS_methods.prepare_and_compute_iteratively_new_X(ease_model, df, train, train_clients, train_merchants,output_table,\
+                                                    connection, candidates=candidates) 
+
+    connection.close()
+
+def compute_from_sql_table(db_name, input_table, output_table,  ease_lambda =1000.0, candidates = None, save_matrix_B = True, modify_diagonal= True, save_prediction= True):
+    """
+    Loads data from database table. Uses it as input for EASE algorithm. Computes EASE. Write the new score to the database table
+    Parameters
+    ----------
+    db_name : str
+        name of used database
+    table_name : str
+        name of table
+    ease_lambda : float, optional
+        L2-regulization parameter, by default 1000
+    Returns
+    -------
+    pd.DataFrame
+        results of prediction
+    """
+    print("- {0} - Loading data...".format(datetime.now(pytz.timezone('Europe/Prague')).strftime("%Y-%m-%d -- %H:%M:%S")))
+    df, connection = SQLHelper.load_from_table(db_name, input_table)
+    
+    
+        
+    print("- {0} - START EASE...".format(datetime.now(pytz.timezone('Europe/Prague')).strftime("%Y-%m-%d -- %H:%M:%S")))
+    ease = EASE()
+
+    print("- {0} - CREATE - train dataframe...".format(datetime.now(pytz.timezone('Europe/Prague')).strftime("%Y-%m-%d -- %H:%M:%S")))
+    train, train_clients, train_merchants = AERS_methods.get_train(df)
+
+    print("- {0} - Fit EASE model...".format(datetime.now(pytz.timezone('Europe/Prague')).strftime("%Y-%m-%d -- %H:%M:%S")))
+    ease.fit(train,lambda_ = ease_lambda)
+
+    if modify_diagonal:
+        print("-- {0} - Add diagonal values...".format(datetime.now(pytz.timezone('Europe/Prague')).strftime("%Y-%m-%d -- %H:%M:%S")))
+
+        connection_diagonal = db.connect(db_name)
+        diagonal_matrix_B = pd.read_sql(f"""select *  from work.ease_B_diagonal""", connection_diagonal)
+        connection_diagonal.close()
+
+        diagonal_matrix_B_dic = dict(zip(diagonal_matrix_B.merchant_id, diagonal_matrix_B.score))
+
+        for idx in list(range(ease.B.shape[0])):
+            id = ease.merchant_enc.inverse_transform([idx])[0]
+            if id in diagonal_matrix_B_dic.keys():
+                ease.B[idx, idx] = diagonal_matrix_B_dic[id]
+            else: 
+                print('--- {0} - Not found merchant: Index {1} - Merchant_id {2}.'.format(datetime.now(pytz.timezone('Europe/Prague')).strftime("%Y-%m-%d -- %H:%M:%S"), idx, id))
+
+    if save_prediction:
+        print("- {0} - Predictions...".format(datetime.now(pytz.timezone('Europe/Prague')).strftime("%Y-%m-%d -- %H:%M:%S")))       
+        AERS_methods.prepare_and_compute_iteratively(ease, df, train, train_clients, train_merchants, output_table,\
+                                                            connection, candidates=candidates)            
+    connection.close()
+    
+    if save_matrix_B:
+        save_matrix_B(ease)
+                    
+    print("-- {0} - Finish !!!".format(datetime.now(pytz.timezone('Europe/Prague')).strftime("%Y-%m-%d -- %H:%M:%S")))      
+        
+def compute(df, ease_lambda =1000.0, candidates = None):
+    """
+    Computes EASE from pd.dataframe
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        input with columns: client_id, merchant_id, has_transaction_before
+    ease_lambda : float, optional
+        L2-regulization parameter, by default 1000
+    Returns
+    -------
+    pd.DataFrame
+        results of prediction
+    """
+    ease = EASE()
+    train, train_clients, train_merchants = AERS_methods.get_train(df)
+    ease.fit(train,lambda_ = ease_lambda)
+    return AERS_methods.prepare_and_compute(ease, df, train, train_clients, train_merchants, candidates)
+
+
+def compute_to_test_with_data_preparation(name_of_term, cutoff_date_train, cutoff_date_test, testinterval, clients_merchants_table, 
+                 interval_for_test_offers_late_start, only_possible_candidates=True,get_all_candidates_without_offer=False, k=20, \
+                    only_merchants_without_transaction = True,get_all = True,save_to_csv=True, csv_name='', ease_lambda =1000.0):
+    """
+    Calls DataPreparation and then computes EASE for testing purposes
+    For bigger detail take a look at DataPreparation and compute_EASE_completely_to_test code documentation
+    """
+    DataPreparation(name_of_term, cutoff_date_train, cutoff_date_test, testinterval, clients_merchants_table, \
+                 interval_for_test_offers_late_start, get_all_candidates_without_offer)
+    return compute_to_test(name_of_term, only_possible_candidates,save_to_csv,csv_name, k, only_merchants_without_transaction,\
+                                 get_all, ease_lambda)
+    
+
+def compute_to_test(name_of_term, only_possible_candidates=True,save_to_csv=True,csv_name='', k=20\
+                                , only_merchants_without_transaction = True, get_all = True, ease_lambda =1000.0):
+    """
+    Computes EASE and returns dataframe with its results. Gets input datasets based on 'name_of_term' parameter
+    Parameters
+    ----------
+    name_of_term : str
+        name of period that is tested, ensures link-up to correct input datasets 
+            Recommended format "_11_22"
+    only_possible_candidates : bool, optional
+        says if I should return score only for the possible candidates (has offer in the test term) or to all possible merchants
+    save_to_csv : bool, optional
+        says if I should save the dataframe with results to file
+    csv_name : bool, optional
+        name of results file - if set results will be saved into file "results{csv_name}{name_of_term}.csv", if not - "resultsEASE{name_of_term}.csv"
+    k : _type_, optional
+        Maximum number of top recommendations I should return for each user, by default 20
+    only_merchants_without_transaction : bool, optional
+        Says if I should recommend only the merchants without user previous transaction, by default True
+    get_all : bool, optional
+        Ignoring parameter k and returns all possible candidates, by default True
+    ease_lambda : float, optional
+        L2-regulization parameter, by default 1000
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame in format: [client_id, merchant_id, score, rank(for client)]
+    """
+    train, possible_candidates_df = AERS_methods.get_train_and_candidates(name_of_term, only_possible_candidates)
+    ease = EASE()
+    ease.fit(train, lambda_= ease_lambda)
+    results_df = ease.predict(train, train["client_id"].unique(), possible_candidates_df["merchant_id"].unique(),\
+                               k, only_merchants_without_transaction, get_all)
+    if(save_to_csv):
+        if(csv_name==''):
+            results_df.to_csv(os.path.join(csv_files_folder,f"resultsEASE{name_of_term}.csv"), index = False)
+        else:
+            results_df.to_csv(os.path.join(csv_files_folder,f"results{csv_name}{name_of_term}.csv"), index = False)
+    return results_df
+
+
+
+
+
+
+
+
+
+
